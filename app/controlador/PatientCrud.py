@@ -43,4 +43,6 @@ def GetPatientByIdentifier(patientSystem, patientValue):
             return "success", patient
         return "notFound", None
     except Exception as e:
+        print("Error en GetPatientByIdentifier:", e)
         return "notFound", None
+
