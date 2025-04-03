@@ -46,24 +46,29 @@ def GetPatientByIdentifier(patientSystem, patientValue):
         print("Error en GetPatientByIdentifier:", e)
         return "notFound", None
 
-def WriteServiceRequest(service_request_data: dict):
-    try:
-        # Inserta la solicitud de cita en la colección correspondiente
-        result = service_requests_collection.insert_one(service_request_data)
-        return "success", str(result.inserted_id)
-    except Exception as e:
-        print("Error en WriteServiceRequest:", e)
-        return "error", None
+def ReadServiceRequest(service_request_id: str) -> dict:
+    """
+    Recupera una solicitud de servicio de la base de datos a partir de su ID.
 
-@app.get("/service-request/{service_request_id}", response_model=dict)
-async def get_service_request(service_request_id: str):
-    # Llama a la función que obtiene la solicitud de servicio desde la base de datos
-    service_request = ReadServiceRequest(service_request_id)
+    :param service_request_id: ID de la solicitud de servicio (como string).
+    :return: Diccionario con los datos de la solicitud o None si no se encuentra.
+    """
+    try:
+        # Intenta convertir el string del ID a un ObjectId de MongoDB
+        query = {"_id": ObjectId(service_request_id)}
+    except Exception as e:
+        print(f"Error al convertir el ID: {e}")
+        return None
+
+    # Busca la solicitud en la colección
+    service_request = collection.find_one(query)
     
     if service_request:
+        # Convertir el ObjectId a string para que sea compatible con JSON
+        service_request["_id"] = str(service_request["_id"])
         return service_request
     else:
-        raise HTTPException(status_code=404, detail="Solicitud de servicio no encontrada")
+        return None
 
 
 def GetAppointmentByIdentifier(appointmentSystem, appointmentValue):

@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request
 import uvicorn
-from app.controlador.PatientCrud import GetPatientById,WritePatient,GetPatientByIdentifier,WriteServiceRequest,g
+from app.controlador.PatientCrud import GetPatientById,WritePatient,GetPatientByIdentifier,WriteServiceRequest
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -33,6 +33,16 @@ async def get_patient_by_identifier(system: str, value: str):
         raise HTTPException(status_code=404, detail="Patient not found")
     else:
         raise HTTPException(status_code=500, detail=f"Internal error. {status}")
+
+@app.get("/service-request/{service_request_id}", response_model=dict)
+async def get_service_request(service_request_id: str):
+    # Llama a la función que obtiene la solicitud de servicio desde la base de datos
+    service_request = ReadServiceRequest(service_request_id)
+    
+    if service_request:
+        return service_request
+    else:
+        raise HTTPException(status_code=404, detail="Solicitud de servicio no encontrada")
         
 
 @app.post("/patient", response_model=dict)
