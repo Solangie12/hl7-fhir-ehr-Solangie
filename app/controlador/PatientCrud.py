@@ -30,7 +30,14 @@ def WritePatient(patient_dict: dict):
 
 def GetPatientByIdentifier(patientSystem, patientValue):
     try:
-        patient = collection.find_one({"identifier.system":patientSystem,"identifier.value":patientValue})
+        patient = collection.find_one({
+            "identifier": {
+                "$elemMatch": {
+                    "system": patientSystem,
+                    "value": patientValue
+                }
+            }
+        })
         if patient:
             patient["_id"] = str(patient["_id"])
             return "success", patient
