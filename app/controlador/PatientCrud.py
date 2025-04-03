@@ -55,23 +55,15 @@ def WriteServiceRequest(service_request_data: dict):
         print("Error en WriteServiceRequest:", e)
         return "error", None
 
-def GetServiceRequestByIdentifier(serviceRequestSystem, serviceRequestValue):
-    try:
-        service_request = service_requests_collection.find_one({
-            "identifier": {
-                "$elemMatch": {
-                    "system": serviceRequestSystem,
-                    "value": serviceRequestValue
-                }
-            }
-        })
-        if service_request:
-            service_request["_id"] = str(service_request["_id"])
-            return "success", service_request
-        return "notFound", None
-    except Exception as e:
-        print("Error in GetServiceRequestByIdentifier:", e)
-        return "notFound", None
+@app.get("/service-request/{service_request_id}", response_model=dict)
+async def get_service_request(service_request_id: str):
+    # Llama a la función que obtiene la solicitud de servicio desde la base de datos
+    service_request = ReadServiceRequest(service_request_id)
+    
+    if service_request:
+        return service_request
+    else:
+        raise HTTPException(status_code=404, detail="Solicitud de servicio no encontrada")
 
 
 def GetAppointmentByIdentifier(appointmentSystem, appointmentValue):
