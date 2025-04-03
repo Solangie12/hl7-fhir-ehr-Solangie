@@ -46,3 +46,49 @@ def GetPatientByIdentifier(patientSystem, patientValue):
         print("Error en GetPatientByIdentifier:", e)
         return "notFound", None
 
+def WriteServiceRequest(service_request_data: dict):
+    try:
+        # Inserta la solicitud de cita en la colección correspondiente
+        result = service_requests_collection.insert_one(service_request_data)
+        return "success", str(result.inserted_id)
+    except Exception as e:
+        print("Error en WriteServiceRequest:", e)
+        return "error", None
+
+def GetServiceRequestByIdentifier(serviceRequestSystem, serviceRequestValue):
+    try:
+        service_request = service_requests_collection.find_one({
+            "identifier": {
+                "$elemMatch": {
+                    "system": serviceRequestSystem,
+                    "value": serviceRequestValue
+                }
+            }
+        })
+        if service_request:
+            service_request["_id"] = str(service_request["_id"])
+            return "success", service_request
+        return "notFound", None
+    except Exception as e:
+        print("Error in GetServiceRequestByIdentifier:", e)
+        return "notFound", None
+
+
+def GetAppointmentByIdentifier(appointmentSystem, appointmentValue):
+    try:
+        appointment = appointments_collection.find_one({
+            "identifier": {
+                "$elemMatch": {
+                    "system": appointmentSystem,
+                    "value": appointmentValue
+                }
+            }
+        })
+        if appointment:
+            appointment["_id"] = str(appointment["_id"])
+            return "success", appointment
+        return "notFound", None
+    except Exception as e:
+        print("Error en GetAppointmentByIdentifier:", e)
+        return "notFound", None
+
