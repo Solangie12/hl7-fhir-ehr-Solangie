@@ -7,6 +7,7 @@ import json
 collection = connect_to_mongodb("SamplePatientService", "patients")
 # Conexión a la base de datos para la colección de solicitudes de servicio
 service_requests_collection = connect_to_mongodb("SamplePatientService", "service_requests")
+appointment_collection = connect_to_mongodb("SamplePatientService", "appointment")
 
 def GetPatientById(patient_id: str):
     try:
@@ -96,4 +97,32 @@ def GetAppointmentByIdentifier(appointmentSystem, appointmentValue):
     except Exception as e:
         print("Error en GetAppointmentByIdentifier:", e)
         return "notFound", None
+
+def write_appointment(appointment_data: dict):
+    """
+    Inserta un appointment en la colección de appointments.
+    """
+    try:
+        result = appointment_collection.insert_one(appointment_data)
+        return "success", str(result.inserted_id)
+    except Exception as e:
+        print("Error in write_appointment:", e)
+        return "error", None
+
+def read_appointment(appointment_id: str) -> dict:
+    """
+    Recupera un appointment a partir de su ID.
+    """
+    try:
+        query = {"_id": ObjectId(appointment_id)}
+    except Exception as e:
+        print("Error al convertir el ID:", e)
+        return None
+
+    appointment = appointment_collection.find_one(query)
+    if appointment:
+        appointment["_id"] = str(appointment["_id"])
+        return appointment
+    else:
+        return None
 

@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request
 import uvicorn
-from app.controlador.PatientCrud import GetPatientById,WritePatient,GetPatientByIdentifier,WriteServiceRequest,read_service_request
+from app.controlador.PatientCrud import GetPatientById,WritePatient,GetPatientByIdentifier,WriteServiceRequest,read_service_request,write_appointment,read_appointment
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -70,3 +70,24 @@ async def add_service_request(request: Request):
     else:
         raise HTTPException(status_code=500, detail=f"Error al registrar la solicitud: {status}")
 
+@app.post("/appointment", response_model=dict)
+async def add_appointment(request: Request):
+    # Obtiene el JSON enviado en la solicitud POST
+    appointment_data = await request.json()
+    
+    # Llama a la función que inserta el appointment en la base de datos
+    status, appointment_id = write_appointment(appointment_data)
+    
+    if status == "success":
+        return {"_id": appointment_id}
+    else:
+        raise HTTPException(status_code=500, detail="Error al registrar la cita")
+
+@app.get("/appointment/{appointment_id}", response_model=dict)
+async def get_appointment(appointment_id: str):
+    # Llama a la función que obtiene el appointment de la base de datos
+    appointment = read_appointment(appointment_id)
+    if appointment:
+        return appointment
+    else:
+        raise HTTPException(status_code=404, detail="Cita no encontrada")
