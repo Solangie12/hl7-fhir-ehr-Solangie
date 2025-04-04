@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request
 import uvicorn
-from app.controlador.PatientCrud import GetPatientById,WritePatient,GetPatientByIdentifier,ReadServiceRequest
+from app.controlador.PatientCrud import GetPatientById,WritePatient,GetPatientByIdentifier,WriteServiceRequest
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -70,3 +70,4 @@ async def add_service_request(request: Request):
         return {"_id": service_request_id}
     else:
         raise HTTPException(status_code=500, detail=f"Error al registrar la solicitud: {status}")
+

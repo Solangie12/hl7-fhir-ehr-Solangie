@@ -46,29 +46,15 @@ def GetPatientByIdentifier(patientSystem, patientValue):
         print("Error en GetPatientByIdentifier:", e)
         return "notFound", None
 
-def ReadServiceRequest(service_request_id: str) -> dict:
-    """
-    Recupera una solicitud de servicio de la base de datos a partir de su ID.
-
-    :param service_request_id: ID de la solicitud de servicio (como string).
-    :return: Diccionario con los datos de la solicitud o None si no se encuentra.
-    """
+def WriteServiceRequest(service_request_data: dict):
     try:
-        # Intenta convertir el string del ID a un ObjectId de MongoDB
-        query = {"_id": ObjectId(service_request_id)}
+        # Inserta la solicitud de cita en la colección correspondiente
+        result = service_requests_collection.insert_one(service_request_data)
+        return "success", str(result.inserted_id)
     except Exception as e:
-        print(f"Error al convertir el ID: {e}")
-        return None
+        print("Error en WriteServiceRequest:", e)
+        return "error", None
 
-    # Busca la solicitud en la colección
-    service_request = collection.find_one(query)
-    
-    if service_request:
-        # Convertir el ObjectId a string para que sea compatible con JSON
-        service_request["_id"] = str(service_request["_id"])
-        return service_request
-    else:
-        return None
 
 
 def GetAppointmentByIdentifier(appointmentSystem, appointmentValue):
