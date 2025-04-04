@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request
 import uvicorn
-from app.controlador.PatientCrud import GetPatientById,WritePatient,GetPatientByIdentifier,WriteServiceRequest
+from app.controlador.PatientCrud import GetPatientById,WritePatient,GetPatientByIdentifier,WriteServiceRequest,read_service_request
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -36,9 +36,8 @@ async def get_patient_by_identifier(system: str, value: str):
 
 @app.get("/service-request/{service_request_id}", response_model=dict)
 async def get_service_request(service_request_id: str):
-    # Llama a la función que obtiene la solicitud de servicio desde la base de datos
-    service_request = ReadServiceRequest(service_request_id)
-    
+    # Llama a la función auxiliar que obtiene la solicitud de servicio
+    service_request = read_service_request(service_request_id)
     if service_request:
         return service_request
     else:
