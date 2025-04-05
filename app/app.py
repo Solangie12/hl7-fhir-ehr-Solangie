@@ -53,9 +53,6 @@ async def add_patient(request: Request):
     else:
         raise HTTPException(status_code=500, detail=f"Validating error: {status}")
 
-if __name__ == '__main__':
-    import uvicorn
-    uvicorn.run(app, host="0.0.0.0", port=8000)
 
 @app.post("/service-request", response_model=dict)
 async def add_service_request(request: Request):
@@ -91,3 +88,7 @@ async def get_appointment(appointment_id: str):
         return appointment
     else:
         raise HTTPException(status_code=404, detail="Cita no encontrada")
+
+if __name__ == '__main__':
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
